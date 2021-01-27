@@ -1,4 +1,4 @@
-# Adafruit_BMP3XX [![Build Status](https://github.com/adafruit/Adafruit_BMP3XX/workflows/Arduino%20Library%20CI/badge.svg)](https://github.com/adafruit/Adafruit_BMP3XX/actions)
+# GCI_BMP3XX 
 
 <img src="https://cdn-shop.adafruit.com/970x728/3966-00.jpg" height="300"/>
 
