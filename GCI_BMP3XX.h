@@ -38,9 +38,9 @@
  *  Wraps the Bosch library for Arduino usage
  */
 
-class CGI_BMP3XX {
+class GCI_BMP3XX {
 public:
-  Adafruit_BMP3XX();
+  GCI_BMP3XX();
 
   bool begin_I2C(uint8_t addr = BMP3XX_DEFAULT_ADDRESS,
                  TwoWire *theWire = &Wire);
