@@ -38,7 +38,7 @@
  *  Wraps the Bosch library for Arduino usage
  */
 
-class Adafruit_BMP3XX {
+class CGI_BMP3XX {
 public:
   Adafruit_BMP3XX();
 
