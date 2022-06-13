@@ -20,12 +20,7 @@
 #include <Adafruit_Sensor.h>
 #include "GCI_BMP3XX.h"
 
-#define BMP_SCK 13
-#define BMP_MISO 12
-#define BMP_MOSI 11
-#define BMP_CS 10
-
-#define SEALEVELPRESSURE_HPA (1013.25)
+constexpr float SEALEVELPRESSURE_HPA {1013.25};
 
 GCI_BMP3XX bmp;
 
@@ -37,8 +32,6 @@ void setup() {
   // Wire.setClock(400000); // 400 kHz
 
   if (!bmp.begin_I2C()) {   // hardware I2C mode, can pass in address & alt Wire
-  //if (! bmp.begin_SPI(BMP_CS)) {  // hardware SPI mode
-  //if (! bmp.begin_SPI(BMP_CS, BMP_SCK, BMP_MISO, BMP_MOSI)) {  // software SPI mode
     Serial.println("Could not find a valid BMP3 sensor, check wiring!");
     while (1);
   }
@@ -81,7 +74,6 @@ void loop() {
 
   // Serial.println(bmp.temperature, 1);       // C
   Serial.println(bmp.pressure / 100.0, 3);  // hPa
-  // Serial.println(bmp.readAltitude(SEALEVELPRESSURE_HPA), 3); // m
 
   delay(10); // ~100Hz
 }

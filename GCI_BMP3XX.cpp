@@ -28,20 +28,13 @@
 #include "GCI_BMP3XX.h"
 #include "Arduino.h"
 
-//#define BMP3XX_DEBUG
-
 Adafruit_I2CDevice *i2c_dev = NULL; ///< Global I2C interface pointer
-Adafruit_SPIDevice *spi_dev = NULL; ///< Global SPI interface pointer
 
 // Our hardware interface functions
 static int8_t i2c_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len,
                         void *intf_ptr);
 static int8_t i2c_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len,
                        void *intf_ptr);
-static int8_t spi_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len,
-                       void *intf_ptr);
-static int8_t spi_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len,
-                        void *intf_ptr);
 static void delay_usec(uint32_t us, void *intf_ptr);
 static int8_t validate_trimming_param(struct bmp3_dev *dev);
 static int8_t cal_crc(uint8_t seed, uint8_t data);
@@ -56,7 +49,7 @@ static int8_t cal_crc(uint8_t seed, uint8_t data);
 */
 /**************************************************************************/
 GCI_BMP3XX::GCI_BMP3XX(void) {
-  _meas_end = 0;
+  // _meas_end = 0;
   // _filterEnabled = _tempOSEnabled = _presOSEnabled = false;
 }
 
@@ -76,9 +69,9 @@ GCI_BMP3XX::GCI_BMP3XX(void) {
 bool GCI_BMP3XX::begin_I2C(uint8_t addr, TwoWire *theWire) {
   if (i2c_dev)
     delete i2c_dev;
-  if (spi_dev)
-    delete spi_dev;
-  spi_dev = NULL;
+  // if (spi_dev)
+  //   delete spi_dev;
+  // spi_dev = NULL;
 
   i2c_dev = new Adafruit_I2CDevice(addr, theWire);
 
@@ -94,139 +87,27 @@ bool GCI_BMP3XX::begin_I2C(uint8_t addr, TwoWire *theWire) {
   the_sensor.intf_ptr = i2c_dev;
   the_sensor.dummy_byte = 0;
 
-  return _init();
-}
-
-/*!
- *    @brief  Sets up the hardware and initializes hardware SPI
- *    @param  cs_pin The arduino pin # connected to chip select
- *    @param  theSPI The SPI object to be used for SPI connections.
- *    @return True if initialization was successful, otherwise false.
- */
-bool GCI_BMP3XX::begin_SPI(uint8_t cs_pin, SPIClass *theSPI) {
-  if (i2c_dev)
-    delete i2c_dev;
-  if (spi_dev)
-    delete spi_dev;
-  i2c_dev = NULL;
-
-  spi_dev = new Adafruit_SPIDevice(cs_pin,
-                                   BMP3XX_DEFAULT_SPIFREQ, // frequency
-                                   SPI_BITORDER_MSBFIRST,  // bit order
-                                   SPI_MODE0,              // data mode
-                                   theSPI);
-
-  if (!spi_dev->begin()) {
-    return false;
-  }
-
-  the_sensor.chip_id = cs_pin;
-  the_sensor.intf = BMP3_SPI_INTF;
-  the_sensor.read = &spi_read;
-  the_sensor.write = &spi_write;
-  the_sensor.intf_ptr = spi_dev;
-  the_sensor.dummy_byte = 1;
-
-  return _init();
-}
-
-/*!
- *    @brief  Sets up the hardware and initializes software SPI
- *    @param  cs_pin The arduino pin # connected to chip select
- *    @param  sck_pin The arduino pin # connected to SPI clock
- *    @param  miso_pin The arduino pin # connected to SPI MISO
- *    @param  mosi_pin The arduino pin # connected to SPI MOSI
- *    @return True if initialization was successful, otherwise false.
- */
-bool GCI_BMP3XX::begin_SPI(int8_t cs_pin, int8_t sck_pin, int8_t miso_pin,
-                                int8_t mosi_pin) {
-  if (i2c_dev)
-    delete i2c_dev;
-  if (spi_dev)
-    delete spi_dev;
-  i2c_dev = NULL;
-
-  spi_dev = new Adafruit_SPIDevice(cs_pin, sck_pin, miso_pin, mosi_pin,
-                                   BMP3XX_DEFAULT_SPIFREQ, // frequency
-                                   SPI_BITORDER_MSBFIRST,  // bit order
-                                   SPI_MODE0);             // data mode
-
-  if (!spi_dev->begin()) {
-    return false;
-  }
-
-  the_sensor.chip_id = cs_pin;
-  the_sensor.intf = BMP3_SPI_INTF;
-  the_sensor.read = &spi_read;
-  the_sensor.write = &spi_write;
-  the_sensor.intf_ptr = spi_dev;
-  the_sensor.dummy_byte = 1;
-
-  return _init();
-}
-
-bool GCI_BMP3XX::_init(void) {
+//   return _init();
+// }
+//
+// bool GCI_BMP3XX::_init(void) {
   the_sensor.delay_us = delay_usec;
   int8_t rslt = BMP3_OK;
 
   /* Reset the sensor */
   rslt = bmp3_soft_reset(&the_sensor);
-#ifdef BMP3XX_DEBUG
-  Serial.print("Reset result: ");
-  Serial.println(rslt);
-#endif
+
   if (rslt != BMP3_OK){
     Serial.println("reset failed");
     return false;
   }
 
   rslt = bmp3_init(&the_sensor);
-#ifdef BMP3XX_DEBUG
-  Serial.print("Init result: ");
-  Serial.println(rslt);
-#endif
 
   rslt = validate_trimming_param(&the_sensor);
-#ifdef BMP3XX_DEBUG
-  Serial.print("Valtrim result: ");
-  Serial.println(rslt);
-#endif
 
   if (rslt != BMP3_OK)
     return false;
-
-#ifdef BMP3XX_DEBUG
-  Serial.print("T1 = ");
-  Serial.println(the_sensor.calib_data.reg_calib_data.par_t1);
-  Serial.print("T2 = ");
-  Serial.println(the_sensor.calib_data.reg_calib_data.par_t2);
-  Serial.print("T3 = ");
-  Serial.println(the_sensor.calib_data.reg_calib_data.par_t3);
-  Serial.print("P1 = ");
-  Serial.println(the_sensor.calib_data.reg_calib_data.par_p1);
-  Serial.print("P2 = ");
-  Serial.println(the_sensor.calib_data.reg_calib_data.par_p2);
-  Serial.print("P3 = ");
-  Serial.println(the_sensor.calib_data.reg_calib_data.par_p3);
-  Serial.print("P4 = ");
-  Serial.println(the_sensor.calib_data.reg_calib_data.par_p4);
-  Serial.print("P5 = ");
-  Serial.println(the_sensor.calib_data.reg_calib_data.par_p5);
-  Serial.print("P6 = ");
-  Serial.println(the_sensor.calib_data.reg_calib_data.par_p6);
-  Serial.print("P7 = ");
-  Serial.println(the_sensor.calib_data.reg_calib_data.par_p7);
-  Serial.print("P8 = ");
-  Serial.println(the_sensor.calib_data.reg_calib_data.par_p8);
-  Serial.print("P9 = ");
-  Serial.println(the_sensor.calib_data.reg_calib_data.par_p9);
-  Serial.print("P10 = ");
-  Serial.println(the_sensor.calib_data.reg_calib_data.par_p10);
-  Serial.print("P11 = ");
-  Serial.println(the_sensor.calib_data.reg_calib_data.par_p11);
-  // Serial.print("T lin = ");
-  // Serial.println(the_sensor.calib_data.reg_calib_data.t_lin);
-#endif
 
     uint16_t settings_sel = 0;
     the_sensor.settings.temp_en = BMP3_ENABLE;
@@ -262,56 +143,11 @@ bool GCI_BMP3XX::_init(void) {
 
 /**************************************************************************/
 /*!
-    @brief Performs a reading and returns the ambient temperature.
-    @return Temperature in degrees Centigrade
-*/
-/**************************************************************************/
-float GCI_BMP3XX::readTemperature(void) {
-  performReading();
-  return temperature;
-}
-
-/**************************************************************************/
-/*!
     @brief Reads the chip identifier
     @return BMP3_CHIP_ID or BMP390_CHIP_ID
 */
 /**************************************************************************/
 uint8_t GCI_BMP3XX::chipID(void) { return the_sensor.chip_id; }
-
-/**************************************************************************/
-/*!
-    @brief Performs a reading and returns the barometric pressure.
-    @return Barometic pressure in Pascals
-*/
-/**************************************************************************/
-float GCI_BMP3XX::readPressure(void) {
-  performReading();
-  return pressure;
-}
-
-/**************************************************************************/
-/*!
-    @brief Calculates the altitude (in meters).
-
-    Reads the current atmostpheric pressure (in hPa) from the sensor and
-   calculates via the provided sea-level pressure (in hPa).
-
-    @param  seaLevel      Sea-level pressure in hPa
-    @return Altitude in meters
-*/
-/**************************************************************************/
-float GCI_BMP3XX::readAltitude(float seaLevel) {
-  // Equation taken from BMP180 datasheet (page 16):
-  //  http://www.adafruit.com/datasheets/BST-BMP180-DS000-09.pdf
-
-  // Note that using the equation from wikipedia can give bad results
-  // at high altitude. See this thread for more information:
-  //  http://forums.adafruit.com/viewtopic.php?f=22&t=58064
-
-  float atmospheric = readPressure() / 100.0F;
-  return 44330.0 * (1.0 - pow(atmospheric / seaLevel, 0.1903));
-}
 
 /**************************************************************************/
 /*!
@@ -508,29 +344,6 @@ int8_t i2c_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len,
 
   if (!i2c_dev->write((uint8_t *)reg_data, len, false, &reg_addr, 1))
     return 1;
-
-  return 0;
-}
-
-/**************************************************************************/
-/*!
-    @brief  Reads 8 bit values over SPI
-*/
-/**************************************************************************/
-static int8_t spi_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len,
-                       void *intf_ptr) {
-  spi_dev->write_then_read(&reg_addr, 1, reg_data, len, 0xFF);
-  return 0;
-}
-
-/**************************************************************************/
-/*!
-    @brief  Writes 8 bit values over SPI
-*/
-/**************************************************************************/
-static int8_t spi_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len,
-                        void *intf_ptr) {
-  spi_dev->write((uint8_t *)reg_data, len, &reg_addr, 1);
 
   return 0;
 }
