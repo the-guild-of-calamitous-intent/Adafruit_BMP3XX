@@ -48,10 +48,7 @@ static int8_t cal_crc(uint8_t seed, uint8_t data);
     @brief  Instantiates sensor
 */
 /**************************************************************************/
-GCI_BMP3XX::GCI_BMP3XX(void) {
-  // _meas_end = 0;
-  // _filterEnabled = _tempOSEnabled = _presOSEnabled = false;
-}
+GCI_BMP3XX::GCI_BMP3XX(void) {}
 
 /**************************************************************************/
 /*!
@@ -69,9 +66,6 @@ GCI_BMP3XX::GCI_BMP3XX(void) {
 bool GCI_BMP3XX::begin_I2C(uint8_t addr, TwoWire *theWire) {
   if (i2c_dev)
     delete i2c_dev;
-  // if (spi_dev)
-  //   delete spi_dev;
-  // spi_dev = NULL;
 
   i2c_dev = new Adafruit_I2CDevice(addr, theWire);
 
@@ -86,11 +80,6 @@ bool GCI_BMP3XX::begin_I2C(uint8_t addr, TwoWire *theWire) {
   the_sensor.write = &i2c_write;
   the_sensor.intf_ptr = i2c_dev;
   the_sensor.dummy_byte = 0;
-
-//   return _init();
-// }
-//
-// bool GCI_BMP3XX::_init(void) {
   the_sensor.delay_us = delay_usec;
   int8_t rslt = BMP3_OK;
 
@@ -126,7 +115,7 @@ bool GCI_BMP3XX::begin_I2C(uint8_t addr, TwoWire *theWire) {
   setIIRFilterCoeff(BMP3_IIR_FILTER_DISABLE);
   setOutputDataRate(BMP3_ODR_25_HZ);
 
-/* Used to select the settings user needs to change */
+  /* Used to select the settings user needs to change */
   settings_sel = 0;
   /* Variable used to select the sensor component */
   uint8_t sensor_comp = 0;

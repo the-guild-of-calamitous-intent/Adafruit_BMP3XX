@@ -25,45 +25,40 @@
 #include "bmp3.h"
 #include <stdint.h>
 #include <Adafruit_I2CDevice.h>
-// #include <Adafruit_SPIDevice.h>
 
 /*=========================================================================
     I2C ADDRESS/BITS
     -----------------------------------------------------------------------*/
-// #define BMP3XX_DEFAULT_ADDRESS (0x77) ///< The default I2C address
 constexpr uint8_t BMP3XX_DEFAULT_ADDRESS {0x77}; ///< The default I2C address
 
 /** Adafruit_BMP3XX Class for both I2C and SPI usage.
  *  Wraps the Bosch library for Arduino usage
  */
-
 class GCI_BMP3XX {
 public:
-  GCI_BMP3XX();
+    GCI_BMP3XX();
 
-  bool begin_I2C(
+    bool begin_I2C(
         uint8_t addr = BMP3XX_DEFAULT_ADDRESS,
         TwoWire *theWire = &Wire);
 
-  uint8_t chipID(void);
+    uint8_t chipID(void);
 
-  bool setTemperatureOversampling(uint8_t os);
-  bool setPressureOversampling(uint8_t os);
-  bool setIIRFilterCoeff(uint8_t fs);
-  bool setOutputDataRate(uint8_t odr);
+    bool setTemperatureOversampling(uint8_t os);
+    bool setPressureOversampling(uint8_t os);
+    bool setIIRFilterCoeff(uint8_t fs);
+    bool setOutputDataRate(uint8_t odr);
 
-  /// Perform a reading in blocking mode
-  bool performReading(void);
+    /// Perform a reading in blocking mode
+    bool performReading(void);
 
-  /// Temperature (Celsius) assigned after calling performReading()
-  double temperature;
-  /// Pressure (Pascals) assigned after calling performReading()
-  double pressure;
+    /// Temperature (Celsius) assigned after calling performReading()
+    double temperature;
+    /// Pressure (Pascals) assigned after calling performReading()
+    double pressure;
 
 private:
-  // bool _init(void);
-
-  struct bmp3_dev the_sensor;
+    struct bmp3_dev the_sensor;
 };
 
 #endif
