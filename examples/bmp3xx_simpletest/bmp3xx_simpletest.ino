@@ -16,8 +16,6 @@
  ***************************************************************************/
 
 #include <Wire.h>
-#include <SPI.h>
-#include <Adafruit_Sensor.h>
 #include "GCI_BMP3XX.h"
 
 constexpr float SEALEVELPRESSURE_HPA {1013.25};
