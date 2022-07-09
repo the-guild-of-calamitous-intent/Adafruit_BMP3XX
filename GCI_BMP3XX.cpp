@@ -98,7 +98,7 @@ bool GCI_BMP3XX::begin_I2C(uint8_t addr, TwoWire *theWire) {
   rslt = bmp3_soft_reset(&the_sensor);
 
   if (rslt != BMP3_OK){
-    Serial.println("reset failed");
+    // Serial.println("reset failed");
     return false;
   }
 
@@ -117,7 +117,7 @@ bool GCI_BMP3XX::begin_I2C(uint8_t addr, TwoWire *theWire) {
     rslt = bmp3_set_sensor_settings(settings_sel, &the_sensor);
 
     if (rslt != BMP3_OK){
-      Serial.println("FAIL setting sensor");
+      // Serial.println("FAIL setting sensor");
       return false;
     }
 
@@ -134,7 +134,7 @@ bool GCI_BMP3XX::begin_I2C(uint8_t addr, TwoWire *theWire) {
   the_sensor.settings.op_mode = BMP3_MODE_NORMAL;
   rslt = bmp3_set_op_mode(&the_sensor);
   if (rslt != BMP3_OK){
-    Serial.println("FAIL setting normal mode");
+    // Serial.println("FAIL setting normal mode");
     return false;
   }
 
@@ -208,7 +208,7 @@ bool GCI_BMP3XX::setTemperatureOversampling(uint8_t oversample) {
     rslt = bmp3_set_sensor_settings(settings_sel, &the_sensor);
 
     if (rslt != BMP3_OK){
-      Serial.println("FAIL setTemperatureOversampling");
+      // Serial.println("FAIL setTemperatureOversampling");
       return false;
     }
 
@@ -242,7 +242,7 @@ bool GCI_BMP3XX::setPressureOversampling(uint8_t oversample) {
     rslt = bmp3_set_sensor_settings(settings_sel, &the_sensor);
 
     if (rslt != BMP3_OK){
-      Serial.println("FAIL setPressureOversampling");
+      // Serial.println("FAIL setPressureOversampling");
       return false;
     }
 
@@ -276,7 +276,7 @@ bool GCI_BMP3XX::setIIRFilterCoeff(uint8_t filtercoeff) {
     rslt = bmp3_set_sensor_settings(settings_sel, &the_sensor);
 
     if (rslt != BMP3_OK){
-      Serial.println("FAIL setIIRFilterCoeff");
+      // Serial.println("FAIL setIIRFilterCoeff");
       return false;
     }
 
@@ -309,7 +309,7 @@ bool GCI_BMP3XX::setOutputDataRate(uint8_t odr) {
     rslt = bmp3_set_sensor_settings(settings_sel, &the_sensor);
 
     if (rslt != BMP3_OK){
-      Serial.println("FAIL setOutputDataRate");
+      // Serial.println("FAIL setOutputDataRate");
       return false;
     }
 
