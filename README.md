@@ -1,6 +1,6 @@
 # GCI_BMP3XX
 
-<img src="https://cdn-shop.adafruit.com/970x728/3966-00.jpg" height="300"/>
+<img src="https://raw.githubusercontent.com/the-guild-of-calamitous-intent/GCI_BMP3XX/master/dps310.jpg"/>
 
 This is a library for the Adafruit BMP388 precision pressure sensor breakout:
   * https://www.adafruit.com/products/3966
