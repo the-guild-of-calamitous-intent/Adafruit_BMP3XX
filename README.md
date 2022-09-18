@@ -2,6 +2,13 @@
 
 <img src="https://raw.githubusercontent.com/the-guild-of-calamitous-intent/GCI_BMP3XX/master/dps310.jpg"/>
 
+> **Why?**
+> Adafruit is awesome, but their driver is written for low power and not for performance. Hence you will not be able to 
+> get sampling rates up to 100Hz (or higher) with their driver because of the way it is coded. See the 
+> [issue](https://github.com/adafruit/Adafruit_BMP3XX/issues/13) and the [pull request](https://github.com/adafruit/Adafruit_BMP3XX/pull/15)
+> for the background discussion.
+
+
 This is a library for the Adafruit BMP388 precision pressure sensor breakout:
   * https://www.adafruit.com/products/3966
 
